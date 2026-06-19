@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KEPT LUXE®</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --surface: #000000;
+      --card: #000000;
+      --border: rgba(255,255,255,0.1);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255,255,255,0.5);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 26px 52px;
+      background: #000;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .nav-logo sup {
+      font-size: 0.5rem;
+      font-weight: 300;
+      vertical-align: super;
+      letter-spacing: 0.05em;
+      margin-left: 2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 44px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .nav-links a:hover { opacity: 0.55; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: #fff;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 99;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      color: #fff;
+      text-decoration: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .mobile-close {
+      position: absolute;
+      top: 26px; right: 52px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    /* ─── PAGES ─── */
+    .page { display: none; padding-top: 88px; min-height: 100vh; }
+    .page.active { display: block; }
+
+    /* ════════════════════════════
+       HOME — HERO
+    ════════════════════════════ */
+    .hero {
+      position: relative;
+      height: calc(100vh - 88px);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.45)),
+        url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1800&q=80&fit=crop') center/cover no-repeat;
+      animation: slowZoom 16s ease-in-out infinite alternate;
+      transform-origin: center center;
+    }
+
+    @keyframes slowZoom {
+      from { transform: scale(1); }
+      to   { transform: scale(1.09); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .hero-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 600;
+      letter-spacing: 0.38em;
+      text-transform: uppercase;
+      color: #fff;
+      line-height: 1;
+      animation: fadeUp 2s cubic-bezier(0.16,1,0.3,1) forwards;
+      opacity: 0;
+    }
+
+    .hero-logo sup {
+      font-size: clamp(0.7rem, 1.2vw, 1rem);
+      font-weight: 300;
+      vertical-align: super;
+      letter-spacing: 0.05em;
+      margin-left: 3px;
+    }
+
+    .hero-rule {
+      width: 52px;
+      height: 1px;
+      background: #fff;
+      animation: fadeUp 2s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+      opacity: 0;
+    }
+
+    .hero-slogan {
+      font-size: 0.52rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: #fff;
+      animation: fadeUp 2s cubic-bezier(0.16,1,0.3,1) 0.55s forwards;
+      opacity: 0;
+    }
+
+    .hero-cta {
+      margin-top: 10px;
+      animation: fadeUp 2s cubic-bezier(0.16,1,0.3,1) 0.8s forwards;
+      opacity: 0;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: fadeUp 2s cubic-bezier(0.16,1,0.3,1) 1.2s forwards;
+      opacity: 0;
+    }
+
+    .scroll-hint span {
+      font-size: 0.44rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 1; }
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn-primary {
+      display: inline-block;
+      background: #fff;
+      color: #000;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 15px 40px;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+
+    .btn-outline {
+      display: inline-block;
+      background: transparent;
+      color: #fff;
+      font-size: 0.58rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 15px 40px;
+      cursor: pointer;
+      border: 1px solid #fff;
+      transition: background 0.2s, color 0.2s;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .btn-outline:hover { background: #fff; color: #000; }
+
+    /* ─── MARQUEE ─── */
+    .marquee-wrap {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 17px 0;
+      background: #000;
+    }
+
+    .marquee-track {
+      display: flex;
+      white-space: nowrap;
+      animation: marquee 24s linear infinite;
+    }
+
+    .marquee-track span {
+      font-size: 0.56rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #fff;
+      padding: 0 40px;
+      flex-shrink: 0;
+    }
+
+    .marquee-track .dot {
+      color: rgba(255,255,255,0.25);
+      padding: 0;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ─── HOME GRID ─── */
+    .home-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin: 2px 0;
+      background: #000;
+    }
+
+    .home-grid-item {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .home-grid-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.9s cubic-bezier(0.25,0.46,0.45,0.94);
+      filter: brightness(0.75);
+    }
+
+    .home-grid-item:hover img { transform: scale(1.04); }
+
+    .home-grid-item .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 55%);
+      display: flex;
+      align-items: flex-end;
+      padding: 32px;
+    }
+
+    .grid-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.9rem;
+      font-weight: 300;
+      letter-spacing: 0.06em;
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .grid-eyebrow {
+      font-size: 0.48rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.55;
+      margin-bottom: 8px;
+    }
+
+    /* ─── HOME STATEMENT ─── */
+    .home-statement {
+      padding: 112px 48px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      background: #000;
+    }
+
+    .home-statement p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.5rem, 3.5vw, 2.8rem);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.55;
+      max-width: 760px;
+      margin: 0 auto 36px;
+      color: #fff;
+    }
+
+    .home-statement .attr {
+      font-size: 0.52rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.4;
+    }
+
+    /* ════════════════════════════
+       SHOP
+    ════════════════════════════ */
+    .shop-header {
+      padding: 64px 52px 44px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      background: #000;
+    }
+
+    .page-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: #fff;
+    }
+
+    .shop-count {
+      font-size: 0.56rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.3;
+    }
+
+    .filter-bar {
+      padding: 20px 52px;
+      display: flex;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      background: #000;
+    }
+
+    .filter-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.54rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 9px 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+
+    .filter-btn:hover { border-color: #fff; }
+
+    .filter-btn.active {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      padding: 2px;
+      background: #000;
+    }
+
+    .product-card {
+      background: #000;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+
+    .product-card:hover { border-color: rgba(255,255,255,0.35); }
+
+    .product-img {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+
+    .product-card:hover .product-img img { transform: scale(1.05); }
+
+    .product-badge {
+      position: absolute;
+      top: 16px; left: 16px;
+      background: #fff;
+      color: #000;
+      font-size: 0.46rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 5px 11px;
+    }
+
+    .product-info {
+      padding: 20px 22px 26px;
+    }
+
+    .product-category {
+      font-size: 0.48rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.4;
+      margin-bottom: 8px;
+    }
+
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #fff;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .product-price {
+      font-size: 0.66rem;
+      letter-spacing: 0.1em;
+      color: #fff;
+      opacity: 0.55;
+      margin-bottom: 18px;
+    }
+
+    .add-to-cart {
+      width: 100%;
+      background: #fff;
+      color: #000;
+      border: none;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.54rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 600;
+      padding: 13px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .add-to-cart:hover { opacity: 0.82; }
+
+    /* ════════════════════════════
+       ABOUT
+    ════════════════════════════ */
+    .about-hero {
+      height: 58vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .about-hero-bg {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(rgba(0,0,0,0.48), rgba(0,0,0,0.72)),
+        url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80&fit=crop') center/cover no-repeat;
+    }
+
+    .about-hero h1 {
+      position: relative;
+      z-index: 2;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 8vw, 6.5rem);
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: #fff;
+    }
+
+    .about-body {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 100px 48px;
+      background: #000;
+    }
+
+    .about-section { margin-bottom: 72px; }
+
+    .about-eyebrow {
+      font-size: 0.52rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.38;
+      margin-bottom: 22px;
+    }
+
+    .about-section h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.7rem, 3.5vw, 2.6rem);
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 24px;
+      line-height: 1.25;
+    }
+
+    .about-section p {
+      font-size: 0.74rem;
+      line-height: 2.1;
+      color: #fff;
+      opacity: 0.55;
+      margin-bottom: 18px;
+    }
+
+    .about-divider {
+      width: 48px;
+      height: 1px;
+      background: rgba(255,255,255,0.2);
+      margin: 60px 0;
+    }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2px;
+      margin-top: 64px;
+    }
+
+    .pillar {
+      background: #000;
+      border: 1px solid var(--border);
+      padding: 40px 28px;
+    }
+
+    .pillar-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.6rem;
+      font-weight: 300;
+      color: #fff;
+      opacity: 0.14;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .pillar h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #fff;
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .pillar p {
+      font-size: 0.62rem;
+      color: #fff;
+      opacity: 0.4;
+      line-height: 1.95;
+    }
+
+    /* ════════════════════════════
+       CONTACT
+    ════════════════════════════ */
+    .contact-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: calc(100vh - 88px);
+      background: #000;
+    }
+
+    .contact-left {
+      padding: 100px 64px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .contact-left h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      font-weight: 300;
+      color: #fff;
+      margin-bottom: 28px;
+      line-height: 1.1;
+    }
+
+    .contact-left > p {
+      font-size: 0.7rem;
+      line-height: 2;
+      color: #fff;
+      opacity: 0.42;
+      margin-bottom: 52px;
+      max-width: 320px;
+    }
+
+    .contact-detail { margin-bottom: 28px; }
+
+    .contact-detail .label {
+      font-size: 0.48rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.35;
+      margin-bottom: 7px;
+    }
+
+    .contact-detail .value {
+      font-size: 0.74rem;
+      color: #fff;
+    }
+
+    .contact-right {
+      padding: 100px 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .form-group { margin-bottom: 30px; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.5rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.38;
+      margin-bottom: 10px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.74rem;
+      padding: 12px 0;
+      outline: none;
+      letter-spacing: 0.06em;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus { border-bottom-color: #fff; }
+
+    .form-group textarea { resize: none; height: 100px; }
+    .form-group select option { background: #000; color: #fff; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: #000;
+      border-top: 1px solid var(--border);
+      padding: 64px 52px 40px;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 56px;
+    }
+
+    .footer-brand .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #fff;
+      margin-bottom: 18px;
+    }
+
+    .footer-brand .logo sup {
+      font-size: 0.48rem;
+      font-weight: 300;
+      vertical-align: super;
+    }
+
+    .footer-brand p {
+      font-size: 0.6rem;
+      color: #fff;
+      opacity: 0.28;
+      line-height: 1.95;
+      max-width: 240px;
+    }
+
+    .footer-col h4 {
+      font-size: 0.5rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #fff;
+      opacity: 0.35;
+      margin-bottom: 20px;
+    }
+
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 12px; }
+
+    .footer-col ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.6rem;
+      opacity: 0.42;
+      transition: opacity 0.2s;
+      cursor: pointer;
+    }
+
+    .footer-col ul li a:hover { opacity: 1; }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+    }
+
+    .footer-bottom p {
+      font-size: 0.52rem;
+      color: #fff;
+      opacity: 0.22;
+      letter-spacing: 0.1em;
+    }
+
+    .social-links { display: flex; gap: 24px; }
+
+    .social-links a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.52rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.32;
+      transition: opacity 0.2s;
+    }
+
+    .social-links a:hover { opacity: 1; }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed;
+      bottom: 32px; right: 32px;
+      background: #fff;
+      color: #000;
+      padding: 16px 28px;
+      font-size: 0.58rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-weight: 600;
+      z-index: 200;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      nav { padding: 22px 24px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+
+      .hero-logo { letter-spacing: 0.22em; }
+
+      .home-grid { grid-template-columns: 1fr; }
+      .home-statement { padding: 72px 24px; }
+
+      .shop-header { padding: 48px 24px 28px; flex-direction: column; align-items: flex-start; gap: 10px; }
+      .filter-bar { padding: 16px 24px; }
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .about-body { padding: 64px 24px; }
+      .pillars { grid-template-columns: 1fr; }
+
+      .contact-wrap { grid-template-columns: 1fr; }
+      .contact-left { padding: 64px 24px 40px; border-right: none; border-bottom: 1px solid var(--border); }
+      .contact-right { padding: 40px 24px 64px; }
+
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+      footer { padding: 48px 24px 32px; }
+      .footer-bottom { flex-direction: column; gap: 18px; align-items: flex-start; }
+    }
+
+    @media (max-width: 540px) {
+      .product-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .mobile-close { right: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">KEPT LUXE<sup>®</sup></div>
+  <ul class="nav-links">
+    <li><a href="#" onclick="showPage('home');return false;">Home</a></li>
+    <li><a href="#" onclick="showPage('shop');return false;">Collection</a></li>
+    <li><a href="#" onclick="showPage('about');return false;">About</a></li>
+    <li><a href="#" onclick="showPage('contact');return false;">Contact</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMenu()">✕</button>
+  <a href="#" onclick="showPage('home');toggleMenu();return false;">Home</a>
+  <a href="#" onclick="showPage('shop');toggleMenu();return false;">Collection</a>
+  <a href="#" onclick="showPage('about');toggleMenu();return false;">About</a>
+  <a href="#" onclick="showPage('contact');toggleMenu();return false;">Contact</a>
+</div>
+
+<!-- ════════════ HOME ════════════ -->
+<div id="page-home" class="page active">
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-logo">KEPT LUXE<sup>®</sup></div>
+      <div class="hero-rule"></div>
+      <div class="hero-slogan">Stay Kept.</div>
+      <div class="hero-cta">
+        <button class="btn-outline" onclick="showPage('shop')">Shop the Collection</button>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-line"></div>
+    </div>
+  </section>
+
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Kept Luxe</span><span class="dot">·</span>
+      <span>New Arrivals</span><span class="dot">·</span>
+      <span>Accessories Edit</span><span class="dot">·</span>
+      <span>Stay Kept</span><span class="dot">·</span>
+      <span>Luxury Redefined</span><span class="dot">·</span>
+      <span>Kept Luxe</span><span class="dot">·</span>
+      <span>New Arrivals</span><span class="dot">·</span>
+      <span>Accessories Edit</span><span class="dot">·</span>
+      <span>Stay Kept</span><span class="dot">·</span>
+      <span>Luxury Redefined</span><span class="dot">·</span>
+      <span>Kept Luxe</span><span class="dot">·</span>
+      <span>New Arrivals</span><span class="dot">·</span>
+      <span>Accessories Edit</span><span class="dot">·</span>
+      <span>Stay Kept</span><span class="dot">·</span>
+      <span>Luxury Redefined</span><span class="dot">·</span>
+    </div>
+  </div>
+
+  <div class="home-grid">
+    <div class="home-grid-item" onclick="showPage('shop')">
+      <img src="https://images.unsplash.com/photo-1617038220319-276d3cfab638?w=900&q=80&fit=crop" alt="Belts"/>
+      <div class="overlay">
+        <div>
+          <p class="grid-eyebrow">New Arrival</p>
+          <div class="grid-label">Leather Belts</div>
+        </div>
+      </div>
+    </div>
+    <div class="home-grid-item" onclick="showPage('shop')">
+      <img src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=900&q=80&fit=crop" alt="Accessories"/>
+      <div class="overlay">
+        <div>
+          <p class="grid-eyebrow">Signature</p>
+          <div class="grid-label">Card Holders<br>&amp; Wallets</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-statement">
+    <p>"Luxury is not about price. It is the feeling of being exactly who you are — and making no apology for it."</p>
+    <span class="attr">— KEPT LUXE®</span>
+  </div>
+
+</div>
+
+<!-- ════════════ SHOP ════════════ -->
+<div id="page-shop" class="page">
+
+  <div class="shop-header">
+    <h1 class="page-title">The Collection</h1>
+    <span class="shop-count">6 Pieces</span>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
+    <button class="filter-btn" onclick="filterProducts('belts',this)">Belts</button>
+    <button class="filter-btn" onclick="filterProducts('wallets',this)">Wallets</button>
+    <button class="filter-btn" onclick="filterProducts('scarves',this)">Scarves</button>
+    <button class="filter-btn" onclick="filterProducts('jewelry',this)">Jewelry</button>
+  </div>
+
+  <div class="product-grid" id="productGrid">
+
+    <div class="product-card" data-category="belts">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=700&q=80&fit=crop" alt="Signature Belt"/>
+        <span class="product-badge">New</span>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Belts</p>
+        <h3 class="product-name">The Signature Belt</h3>
+        <p class="product-price">$95.00</p>
+        <button class="add-to-cart" onclick="handleCart(this)">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-category="wallets">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1627123424574-724758594e93?w=700&q=80&fit=crop" alt="Card Holder"/>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Wallets</p>
+        <h3 class="product-name">Slim Card Holder</h3>
+        <p class="product-price">$65.00</p>
+        <button class="add-to-cart" onclick="handleCart(this)">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-category="scarves">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1601924638867-3a6de6b7a500?w=700&q=80&fit=crop" alt="Silk Scarf"/>
+        <span class="product-badge">Bestseller</span>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Scarves</p>
+        <h3 class="product-name">Silk Evening Wrap</h3>
+        <p class="product-price">$110.00</p>
+        <button class="add-to-cart" onclick="handleCart(this)">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-category="jewelry">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=700&q=80&fit=crop" alt="Gold Chain"/>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Jewelry</p>
+        <h3 class="product-name">Gold Chain Necklace</h3>
+        <p class="product-price">$85.00</p>
+        <button class="add-to-cart" onclick="handleCart(this)">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-category="belts">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=700&q=80&fit=crop" alt="Statement Belt"/>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Belts</p>
+        <h3 class="product-name">Wide Statement Belt</h3>
+        <p class="product-price">$120.00</p>
+        <button class="add-to-cart" onclick="handleCart(this)">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-category="jewelry">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?w=700&q=80&fit=crop" alt="Signet Ring"/>
+        <span class="product-badge">New</span>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Jewelry</p>
+        <h3 class="product-name">Gold Signet Ring</h3>
+        <p class="product-price">$75.00</p>
+        <button class="add-to-cart" onclick="handleCart(this)">Add to Cart</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ ABOUT ════════════ -->
+<div id="page-about" class="page">
+
+  <div class="about-hero">
+    <div class="about-hero-bg"></div>
+    <h1>Our Story</h1>
+  </div>
+
+  <div class="about-body">
+
+    <div class="about-section">
+      <p class="about-eyebrow">The Beginning</p>
+      <h2>Born from a belief that luxury belongs to everyone who demands it.</h2>
+      <p>KEPT LUXE® was built on one idea: that a woman who carries herself with power deserves accessories that reflect that energy. Not borrowed luxury. Not fast fashion with a price tag. Real quality, real intention, real you.</p>
+      <p>We started with accessories because detail is where identity lives. A belt. A card holder. A silk wrap. The small things that complete a look — and tell the world exactly who you are before you say a word.</p>
+    </div>
+
+    <div class="about-divider"></div>
+
+    <div class="about-section">
+      <p class="about-eyebrow">The Name</p>
+      <h2>What does it mean to Stay Kept?</h2>
+      <p>To be kept is not to be contained. It means to be preserved. To be maintained at the highest standard. Every piece in the KEPT LUXE® collection is made to last, made to matter, and made to move with you.</p>
+      <p>Luxe is not a price point. It is a standard. The refusal to settle — in what you wear, in what you carry, in how you show up. Stay Kept.</p>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="pillar-number">I</div>
+        <h3>Quality First</h3>
+        <p>Every piece is selected for material, finish, and longevity. No shortcuts. No compromises.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-number">II</div>
+        <h3>Intentional Design</h3>
+        <p>Clean lines. Considered details. Pieces that elevate any look without competing with it.</p>
+      </div>
+      <div class="pillar">
+        <div class="pillar-number">III</div>
+        <h3>Yours to Keep</h3>
+        <p>Built to last seasons, not trends. Investment pieces for a wardrobe that grows with you.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ CONTACT ════════════ -->
+<div id="page-contact" class="page">
+  <div class="contact-wrap">
+
+    <div class="contact-left">
+      <h1>Get in<br><em style="font-family:'Cormorant Garamond',serif;font-style:italic;">Touch</em></h1>
+      <p>Whether you have a question about an order, a wholesale inquiry, or just want to connect — we would love to hear from you.</p>
+      <div class="contact-detail">
+        <p class="label">Email</p>
+        <p class="value">hello@keptluxe.com</p>
+      </div>
+      <div class="contact-detail">
+        <p class="label">Follow</p>
+        <p class="value">@keptluxe</p>
+      </div>
+      <div class="contact-detail">
+        <p class="label">Response Time</p>
+        <p class="value">Within 24–48 hours</p>
+      </div>
+    </div>
+
+    <div class="contact-right">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" placeholder="Full name"/>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="your@email.com"/>
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <select>
+          <option value="">Select a subject</option>
+          <option>Order Inquiry</option>
+          <option>Wholesale / Partnership</option>
+          <option>Press &amp; Media</option>
+          <option>General Question</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="How can we help you?"></textarea>
+      </div>
+      <button class="btn-primary" style="width:100%;text-align:center;" onclick="submitContact()">Send Message</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">KEPT LUXE<sup>®</sup></div>
+      <p>Luxury accessories for those who move through the world with intention. Stay Kept.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a onclick="showPage('shop')">All Accessories</a></li>
+        <li><a onclick="showPage('shop')">Belts</a></li>
+        <li><a onclick="showPage('shop')">Wallets</a></li>
+        <li><a onclick="showPage('shop')">Scarves</a></li>
+        <li><a onclick="showPage('shop')">Jewelry</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a onclick="showPage('about')">Our Story</a></li>
+        <li><a onclick="showPage('contact')">Contact</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">Shipping Info</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Size Guide</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 KEPT LUXE®. All rights reserved. Registered Trademark.</p>
+    <div class="social-links">
+      <a href="#">Instagram</a>
+      <a href="#">TikTok</a>
+      <a href="#">Pinterest</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  function filterProducts(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
+    });
+  }
+
+  // ── When your Amazon store is live, paste your store URL below
+  // and uncomment the window.open line inside handleCart ──
+  const AMAZON_STORE_URL = 'https://www.amazon.com/s?me=YOUR_SELLER_ID';
+
+  function handleCart() {
+    // window.open(AMAZON_STORE_URL, '_blank');
+    showToast('Shop launching soon — Stay Kept.');
+  }
+
+  function submitContact() {
+    showToast('Message sent — we\'ll be in touch soon.');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3200);
+  }
+</script>
+
+</body>
+</html>
