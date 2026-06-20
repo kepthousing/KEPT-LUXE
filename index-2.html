@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KEPT LUXE®</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root { --black:#000; --white:#fff; --border:rgba(255,255,255,0.1); }
+    html { scroll-behavior:smooth; }
+    body { background:#000; color:#fff; font-family:'Montserrat',sans-serif; font-weight:300; letter-spacing:.04em; overflow-x:hidden; }
+
+    /* ── NAV ── */
+    nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; justify-content:space-between; align-items:center; padding:26px 52px; background:#000; border-bottom:1px solid var(--border); }
+    .nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.45rem; font-weight:600; letter-spacing:.28em; text-transform:uppercase; color:#fff; cursor:pointer; }
+    .nav-logo sup { font-size:.5rem; font-weight:300; vertical-align:super; margin-left:2px; }
+    .nav-links { display:flex; gap:36px; list-style:none; align-items:center; }
+    .nav-links > li > a { color:#fff; text-decoration:none; font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; font-weight:500; transition:opacity .2s; cursor:pointer; }
+    .nav-links > li > a:hover { opacity:.55; }
+    .nav-divider { width:1px; height:14px; background:var(--border); }
+
+    /* Dropdown — fixed hover gap so menu stays open */
+    .nav-dropdown { position:relative; }
+    .nav-dropdown > a { display:flex; align-items:center; gap:7px; }
+    .nav-dropdown > a::after { content:''; width:4px; height:4px; border-right:1px solid rgba(255,255,255,.45); border-bottom:1px solid rgba(255,255,255,.45); transform:rotate(45deg); margin-top:-2px; flex-shrink:0; transition:transform .2s; }
+    /* invisible bridge so mouse can travel to menu */
+    .nav-dropdown::after { content:''; position:absolute; top:100%; left:0; right:0; height:18px; }
+    .nav-dropdown:hover > a::after { transform:rotate(-135deg); margin-top:2px; }
+    .dropdown-menu { position:absolute; top:calc(100% + 18px); left:0; background:#000; border:1px solid var(--border); min-width:190px; padding:8px 0; opacity:0; pointer-events:none; transition:opacity .15s; z-index:200; }
+    .nav-dropdown:hover .dropdown-menu { opacity:1; pointer-events:all; }
+    .dropdown-menu a { display:block; padding:12px 22px; color:#fff; text-decoration:none; font-size:.56rem; letter-spacing:.18em; text-transform:uppercase; opacity:.5; transition:opacity .2s; cursor:pointer; white-space:nowrap; }
+    .dropdown-menu a:hover { opacity:1; }
+    .dropdown-divider { height:1px; background:var(--border); margin:6px 0; }
+
+    /* ── HAMBURGER ── */
+    .hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; padding:4px; }
+    .hamburger span { display:block; width:24px; height:1px; background:#fff; }
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu { display:none; position:fixed; inset:0; background:#000; z-index:99; flex-direction:column; justify-content:center; align-items:center; gap:22px; overflow-y:auto; padding:80px 24px 60px; }
+    .mobile-menu.open { display:flex; }
+    .mobile-menu a { color:#fff; text-decoration:none; font-family:'Cormorant Garamond',serif; font-size:1.55rem; font-weight:300; letter-spacing:.14em; text-transform:uppercase; cursor:pointer; text-align:center; white-space:nowrap; }
+    .mobile-close { position:absolute; top:26px; right:36px; background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer; font-family:'Cormorant Garamond',serif; }
+
+    /* ── PAGES ── */
+    .page { display:none; padding-top:88px; min-height:100vh; }
+    .page.active { display:block; }
+
+    /* ── HERO ── */
+    .hero { position:relative; height:calc(100vh - 88px); overflow:hidden; display:flex; align-items:center; justify-content:center; }
+    .hero-bg { position:absolute; inset:0; background:linear-gradient(rgba(0,0,0,.25),rgba(0,0,0,.45)),url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1800&q=80&fit=crop') center/cover no-repeat; animation:slowZoom 16s ease-in-out infinite alternate; transform-origin:center; }
+    @keyframes slowZoom { from{transform:scale(1)} to{transform:scale(1.09)} }
+    .hero-content { position:relative; z-index:10; display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px; }
+    .hero-logo { font-family:'Cormorant Garamond',serif; font-size:clamp(2.8rem,7vw,5.5rem); font-weight:600; letter-spacing:.38em; text-transform:uppercase; color:#fff; line-height:1; animation:fadeUp 2s cubic-bezier(.16,1,.3,1) forwards; opacity:0; }
+    .hero-logo sup { font-size:clamp(.7rem,1.2vw,1rem); font-weight:300; vertical-align:super; margin-left:3px; }
+    .hero-rule { width:52px; height:1px; background:#fff; animation:fadeUp 2s cubic-bezier(.16,1,.3,1) .3s forwards; opacity:0; }
+    .hero-slogan { font-size:.52rem; letter-spacing:.4em; text-transform:uppercase; color:#fff; animation:fadeUp 2s cubic-bezier(.16,1,.3,1) .55s forwards; opacity:0; }
+    .hero-cta { margin-top:10px; animation:fadeUp 2s cubic-bezier(.16,1,.3,1) .8s forwards; opacity:0; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .scroll-hint { position:absolute; bottom:36px; left:50%; transform:translateX(-50%); z-index:10; display:flex; flex-direction:column; align-items:center; gap:8px; animation:fadeUp 2s cubic-bezier(.16,1,.3,1) 1.2s forwards; opacity:0; }
+    .scroll-hint span { font-size:.44rem; letter-spacing:.3em; text-transform:uppercase; color:rgba(255,255,255,.4); }
+    .scroll-line { width:1px; height:40px; background:linear-gradient(to bottom,rgba(255,255,255,.4),transparent); animation:scrollPulse 2.2s ease-in-out infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+    /* ── BUTTONS ── */
+    .btn-primary { display:inline-block; background:#fff; color:#000; font-size:.58rem; letter-spacing:.22em; text-transform:uppercase; font-weight:600; padding:15px 40px; cursor:pointer; border:none; transition:opacity .2s; font-family:'Montserrat',sans-serif; }
+    .btn-primary:hover { opacity:.85; }
+    .btn-outline { display:inline-block; background:transparent; color:#fff; font-size:.58rem; letter-spacing:.22em; text-transform:uppercase; font-weight:600; padding:15px 40px; cursor:pointer; border:1px solid #fff; transition:background .2s,color .2s; font-family:'Montserrat',sans-serif; }
+    .btn-outline:hover { background:#fff; color:#000; }
+
+    /* ── MARQUEE ── */
+    .marquee-wrap { border-top:1px solid var(--border); border-bottom:1px solid var(--border); overflow:hidden; padding:17px 0; }
+    .marquee-track { display:flex; white-space:nowrap; animation:marquee 24s linear infinite; }
+    .marquee-track span { font-size:.56rem; letter-spacing:.28em; text-transform:uppercase; color:#fff; padding:0 40px; flex-shrink:0; }
+    .marquee-track .dot { color:rgba(255,255,255,.25); padding:0; }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    /* ── HOME GRID ── */
+    .home-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin:2px 0; }
+    .home-grid-item { position:relative; aspect-ratio:4/5; overflow:hidden; cursor:pointer; }
+    .home-grid-item img { width:100%; height:100%; object-fit:cover; transition:transform .9s cubic-bezier(.25,.46,.45,.94); filter:brightness(.75); }
+    .home-grid-item:hover img { transform:scale(1.04); }
+    .home-grid-item .overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,.78) 0%,transparent 55%); display:flex; align-items:flex-end; padding:32px; }
+    .grid-label { font-family:'Cormorant Garamond',serif; font-size:1.9rem; font-weight:300; letter-spacing:.06em; line-height:1.1; color:#fff; }
+    .grid-eyebrow { font-size:.48rem; letter-spacing:.26em; text-transform:uppercase; color:#fff; opacity:.55; margin-bottom:8px; }
+
+    /* ── HOME STATEMENT ── */
+    .home-statement { padding:112px 48px; text-align:center; border-bottom:1px solid var(--border); }
+    .home-statement p { font-family:'Cormorant Garamond',serif; font-size:clamp(1.5rem,3.5vw,2.8rem); font-weight:300; font-style:italic; line-height:1.55; max-width:760px; margin:0 auto 36px; color:#fff; }
+    .home-statement .attr { font-size:.52rem; letter-spacing:.3em; text-transform:uppercase; color:#fff; opacity:.4; }
+
+    /* ── SHOP ── */
+    .shop-header { padding:64px 52px 44px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:flex-end; }
+    .collection-title-block h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.2rem,5vw,4rem); font-weight:300; letter-spacing:.05em; }
+    .collection-subtitle { font-size:.55rem; letter-spacing:.22em; text-transform:uppercase; opacity:.38; margin-top:10px; }
+    .shop-meta { font-size:.56rem; letter-spacing:.2em; text-transform:uppercase; opacity:.3; text-align:right; }
+    .filter-bar { padding:20px 52px; display:flex; gap:14px; border-bottom:1px solid var(--border); overflow-x:auto; }
+    .filter-btn { background:none; border:1px solid var(--border); color:#fff; font-family:'Montserrat',sans-serif; font-size:.54rem; letter-spacing:.2em; text-transform:uppercase; padding:9px 20px; cursor:pointer; white-space:nowrap; transition:border-color .2s,background .2s,color .2s; }
+    .filter-btn:hover { border-color:#fff; }
+    .filter-btn.active { background:#fff; color:#000; border-color:#fff; }
+    .product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; padding:2px; }
+    .product-card { background:#000; cursor:pointer; border:1px solid var(--border); transition:border-color .2s; }
+    .product-card:hover { border-color:rgba(255,255,255,.35); }
+    .product-img { aspect-ratio:3/4; overflow:hidden; position:relative; }
+    .product-img img { width:100%; height:100%; object-fit:cover; transition:transform .8s cubic-bezier(.25,.46,.45,.94); }
+    .product-card:hover .product-img img { transform:scale(1.05); }
+    .product-badge { position:absolute; top:16px; left:16px; background:#fff; color:#000; font-size:.46rem; letter-spacing:.2em; text-transform:uppercase; font-weight:600; padding:5px 11px; }
+    .product-info { padding:20px 22px 26px; }
+    .product-category { font-size:.48rem; letter-spacing:.22em; text-transform:uppercase; opacity:.4; margin-bottom:8px; }
+    .product-name { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:400; margin-bottom:6px; line-height:1.2; }
+    .product-price { font-size:.66rem; letter-spacing:.1em; opacity:.55; margin-bottom:18px; }
+    .view-product-btn { width:100%; background:transparent; color:#fff; border:1px solid var(--border); font-family:'Montserrat',sans-serif; font-size:.54rem; letter-spacing:.22em; text-transform:uppercase; font-weight:600; padding:13px; cursor:pointer; transition:background .2s,color .2s,border-color .2s; }
+    .view-product-btn:hover { background:#fff; color:#000; border-color:#fff; }
+
+    /* ── COMING SOON ── */
+    .coming-soon-section { padding:72px 52px; border-top:1px solid var(--border); text-align:center; }
+    .coming-soon-section h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.6rem,3vw,2.6rem); font-weight:300; letter-spacing:.08em; margin-bottom:12px; }
+    .coming-soon-section p { font-size:.55rem; letter-spacing:.22em; text-transform:uppercase; opacity:.38; }
+
+    /* ── LISTING VIEW ── */
+    .listing-view { display:none; padding-top:88px; min-height:100vh; }
+    .listing-view.active { display:block; }
+    .listing-back { display:flex; align-items:center; gap:12px; padding:32px 52px 0; cursor:pointer; font-size:.54rem; letter-spacing:.2em; text-transform:uppercase; color:#fff; opacity:.5; transition:opacity .2s; border:none; background:none; font-family:'Montserrat',sans-serif; }
+    .listing-back:hover { opacity:1; }
+    .listing-back::before { content:'←'; font-size:.9rem; }
+    .listing-body { display:grid; grid-template-columns:1fr 1fr; min-height:80vh; }
+    .listing-images { position:relative; }
+    .listing-main-img { width:100%; height:100%; object-fit:cover; display:block; filter:brightness(.92); min-height:600px; }
+    .listing-details { padding:64px 56px; display:flex; flex-direction:column; justify-content:center; border-left:1px solid var(--border); }
+    .listing-season { font-size:.48rem; letter-spacing:.3em; text-transform:uppercase; opacity:.38; margin-bottom:20px; }
+    .listing-name { font-family:'Cormorant Garamond',serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:300; line-height:1.1; margin-bottom:16px; letter-spacing:.04em; }
+    .listing-price { font-size:1rem; letter-spacing:.08em; margin-bottom:32px; }
+    .listing-divider { width:48px; height:1px; background:rgba(255,255,255,.2); margin-bottom:32px; }
+    .listing-desc { font-size:.72rem; line-height:2.1; opacity:.55; margin-bottom:36px; max-width:420px; }
+    .listing-details-list { margin-bottom:40px; }
+    .listing-details-list li { display:flex; justify-content:space-between; align-items:center; padding:13px 0; border-bottom:1px solid var(--border); list-style:none; }
+    .listing-details-list li span:first-child { opacity:.4; text-transform:uppercase; letter-spacing:.18em; font-size:.52rem; }
+    .listing-details-list li span:last-child { font-size:.6rem; letter-spacing:.08em; }
+    .listing-cart-btn { width:100%; background:#fff; color:#000; border:none; font-family:'Montserrat',sans-serif; font-size:.58rem; letter-spacing:.24em; text-transform:uppercase; font-weight:600; padding:18px; cursor:pointer; transition:opacity .2s; margin-bottom:14px; }
+    .listing-cart-btn:hover { opacity:.85; }
+    .listing-care { margin-top:32px; padding-top:28px; border-top:1px solid var(--border); }
+    .listing-care h4 { font-size:.5rem; letter-spacing:.26em; text-transform:uppercase; opacity:.35; margin-bottom:14px; }
+    .listing-care p { font-size:.6rem; line-height:1.9; opacity:.42; }
+    .repair-note { margin-top:20px; padding:16px 20px; border:1px solid var(--border); font-size:.58rem; line-height:1.8; opacity:.5; }
+    .repair-note a { color:#fff; text-decoration:underline; cursor:pointer; }
+
+    /* ── ABOUT ── */
+    .about-hero { height:58vh; position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+    .about-hero-bg { position:absolute; inset:0; background:linear-gradient(rgba(0,0,0,.48),rgba(0,0,0,.72)),url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80&fit=crop') center/cover no-repeat; }
+    .about-hero h1 { position:relative; z-index:2; font-family:'Cormorant Garamond',serif; font-size:clamp(2.8rem,8vw,6.5rem); font-weight:300; letter-spacing:.12em; }
+    .about-body { max-width:800px; margin:0 auto; padding:100px 48px; }
+    .about-section { margin-bottom:72px; }
+    .about-eyebrow { font-size:.52rem; letter-spacing:.3em; text-transform:uppercase; opacity:.38; margin-bottom:22px; }
+    .about-section h2 { font-family:'Cormorant Garamond',serif; font-size:clamp(1.7rem,3.5vw,2.6rem); font-weight:300; margin-bottom:24px; line-height:1.25; }
+    .about-section p { font-size:.74rem; line-height:2.1; opacity:.55; margin-bottom:18px; }
+    .about-divider { width:48px; height:1px; background:rgba(255,255,255,.2); margin:60px 0; }
+    .pillars { display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; margin-top:64px; }
+    .pillar { border:1px solid var(--border); padding:40px 28px; }
+    .pillar-number { font-family:'Cormorant Garamond',serif; font-size:2.6rem; font-weight:300; opacity:.14; line-height:1; margin-bottom:20px; }
+    .pillar h3 { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:400; margin-bottom:12px; letter-spacing:.05em; }
+    .pillar p { font-size:.62rem; opacity:.4; line-height:1.95; }
+
+    /* ── CONTACT ── */
+    .contact-wrap { display:grid; grid-template-columns:1fr 1fr; min-height:calc(100vh - 88px); }
+    .contact-left { padding:100px 64px; border-right:1px solid var(--border); display:flex; flex-direction:column; justify-content:center; }
+    .contact-left h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.4rem,5vw,4.2rem); font-weight:300; margin-bottom:28px; line-height:1.1; }
+    .contact-left > p { font-size:.7rem; line-height:2; opacity:.42; margin-bottom:52px; max-width:320px; }
+    .contact-detail { margin-bottom:28px; }
+    .contact-detail .label { font-size:.48rem; letter-spacing:.28em; text-transform:uppercase; opacity:.35; margin-bottom:7px; }
+    .contact-detail .value { font-size:.74rem; }
+    .contact-detail .value a { color:#fff; text-decoration:none; }
+    .contact-detail .value a:hover { text-decoration:underline; }
+    .contact-right { padding:100px 64px; display:flex; flex-direction:column; justify-content:center; }
+    .form-note { font-size:.58rem; line-height:1.8; opacity:.38; margin-bottom:32px; }
+    .form-group { margin-bottom:30px; }
+    .form-group label { display:block; font-size:.5rem; letter-spacing:.24em; text-transform:uppercase; opacity:.38; margin-bottom:10px; }
+    .form-group input,.form-group textarea,.form-group select { width:100%; background:transparent; border:none; border-bottom:1px solid var(--border); color:#fff; font-family:'Montserrat',sans-serif; font-size:.74rem; padding:12px 0; outline:none; letter-spacing:.06em; transition:border-color .2s; appearance:none; }
+    .form-group input:focus,.form-group textarea:focus,.form-group select:focus { border-bottom-color:#fff; }
+    .form-group textarea { resize:none; height:100px; }
+    .form-group select option { background:#000; color:#fff; }
+
+    /* ── INFO PAGES ── */
+    .info-page { display:none; padding-top:88px; min-height:100vh; }
+    .info-page.active { display:block; }
+    .info-header { padding:72px 52px 52px; border-bottom:1px solid var(--border); }
+    .info-header h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(2.2rem,5vw,3.8rem); font-weight:300; letter-spacing:.06em; }
+    .info-body { max-width:820px; margin:0 auto; padding:80px 52px; }
+    .info-section { margin-bottom:60px; }
+    .info-section h2 { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:300; margin-bottom:18px; letter-spacing:.05em; }
+    .info-section p { font-size:.72rem; line-height:2.1; opacity:.55; margin-bottom:12px; }
+    .info-section ul { padding-left:20px; }
+    .info-section li { font-size:.72rem; line-height:2.1; opacity:.55; margin-bottom:8px; }
+    .info-divider { width:48px; height:1px; background:rgba(255,255,255,.2); margin:48px 0; }
+    .info-back { display:flex; align-items:center; gap:12px; padding:32px 52px 0; cursor:pointer; font-size:.54rem; letter-spacing:.2em; text-transform:uppercase; opacity:.5; transition:opacity .2s; border:none; background:none; color:#fff; font-family:'Montserrat',sans-serif; }
+    .info-back:hover { opacity:1; }
+    .info-back::before { content:'←'; font-size:.9rem; }
+    .info-note { border:1px solid var(--border); padding:24px 28px; margin-top:24px; font-size:.68rem; line-height:2; opacity:.52; }
+    .repair-price-note { border:1px solid var(--border); padding:24px 28px; margin-top:24px; font-size:.68rem; line-height:2; opacity:.5; }
+
+    /* ── FOOTER ── */
+    footer { border-top:1px solid var(--border); padding:64px 52px 40px; }
+    .footer-top { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:48px; margin-bottom:56px; }
+    .footer-brand .logo { font-family:'Cormorant Garamond',serif; font-size:1.3rem; font-weight:600; letter-spacing:.28em; text-transform:uppercase; margin-bottom:18px; }
+    .footer-brand .logo sup { font-size:.48rem; font-weight:300; vertical-align:super; }
+    .footer-brand p { font-size:.6rem; opacity:.28; line-height:1.95; max-width:240px; }
+    .footer-col h4 { font-size:.5rem; letter-spacing:.24em; text-transform:uppercase; opacity:.35; margin-bottom:20px; }
+    .footer-col ul { list-style:none; }
+    .footer-col ul li { margin-bottom:12px; }
+    .footer-col ul li a { color:#fff; text-decoration:none; font-size:.6rem; opacity:.42; transition:opacity .2s; cursor:pointer; }
+    .footer-col ul li a:hover { opacity:1; }
+    .footer-bottom { display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border); padding-top:28px; }
+    .footer-bottom p { font-size:.52rem; opacity:.22; letter-spacing:.1em; }
+    .social-links { display:flex; gap:24px; }
+    .social-links a { color:#fff; text-decoration:none; font-size:.52rem; letter-spacing:.18em; text-transform:uppercase; opacity:.32; transition:opacity .2s; }
+    .social-links a:hover { opacity:1; }
+
+    /* ── TOAST ── */
+    .toast { position:fixed; bottom:32px; right:32px; background:#fff; color:#000; padding:16px 28px; font-size:.58rem; letter-spacing:.15em; text-transform:uppercase; font-weight:600; z-index:200; transform:translateY(80px); opacity:0; transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s; pointer-events:none; }
+    .toast.show { transform:translateY(0); opacity:1; }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:900px){
+      nav{padding:22px 24px;} .nav-links{display:none;} .hamburger{display:flex;}
+      .home-grid{grid-template-columns:1fr;}
+      .home-statement{padding:72px 24px;}
+      .shop-header{padding:48px 24px 28px;flex-direction:column;align-items:flex-start;gap:10px;}
+      .filter-bar{padding:16px 24px;}
+      .product-grid{grid-template-columns:repeat(2,1fr);}
+      .listing-body{grid-template-columns:1fr;}
+      .listing-details{border-left:none;border-top:1px solid var(--border);padding:40px 24px;}
+      .listing-back,.info-back{padding:24px 24px 0;}
+      .listing-main-img{min-height:360px;}
+      .about-body{padding:64px 24px;}
+      .pillars{grid-template-columns:1fr;}
+      .contact-wrap{grid-template-columns:1fr;}
+      .contact-left{padding:64px 24px 40px;border-right:none;border-bottom:1px solid var(--border);}
+      .contact-right{padding:40px 24px 64px;}
+      .footer-top{grid-template-columns:1fr 1fr;gap:36px;}
+      footer{padding:48px 24px 32px;}
+      .footer-bottom{flex-direction:column;gap:18px;align-items:flex-start;}
+      .coming-soon-section{padding:56px 24px;}
+      .info-header{padding:52px 24px 36px;}
+      .info-body{padding:52px 24px;}
+    }
+    @media(max-width:540px){
+      .product-grid{grid-template-columns:1fr;}
+      .footer-top{grid-template-columns:1fr;}
+      .mobile-close{right:24px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">KEPT LUXE<sup>®</sup></div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')">Home</a></li>
+    <li><a onclick="showPage('shop')">Collection</a></li>
+    <li><a onclick="showPage('about')">About</a></li>
+    <li class="nav-divider" aria-hidden="true"></li>
+    <li class="nav-dropdown">
+      <a onclick="return false;">Company</a>
+      <div class="dropdown-menu">
+        <a onclick="showInfoPage('repair')">Repair Program</a>
+        <a onclick="showPage('contact')">Contact</a>
+      </div>
+    </li>
+    <li class="nav-dropdown">
+      <a onclick="return false;">Support</a>
+      <div class="dropdown-menu">
+        <a onclick="showInfoPage('shipping')">Shipping Info</a>
+        <a onclick="showInfoPage('returns')">Returns &amp; Exchanges</a>
+        <a onclick="showInfoPage('sizing')">Size Guide</a>
+        <a onclick="showInfoPage('faq')">FAQ</a>
+      </div>
+    </li>
+  </ul>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ══ MOBILE MENU ══ -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMenu()">✕</button>
+  <a onclick="showPage('home');toggleMenu()">Home</a>
+  <a onclick="showPage('shop');toggleMenu()">Collection</a>
+  <a onclick="showPage('about');toggleMenu()">About</a>
+  <a onclick="showInfoPage('repair');toggleMenu()">Repair Program</a>
+  <a onclick="showPage('contact');toggleMenu()">Contact</a>
+  <a onclick="showInfoPage('shipping');toggleMenu()">Shipping Info</a>
+  <a onclick="showInfoPage('returns');toggleMenu()">Returns &amp; Exchanges</a>
+  <a onclick="showInfoPage('sizing');toggleMenu()">Size Guide</a>
+  <a onclick="showInfoPage('faq');toggleMenu()">FAQ</a>
+</div>
+
+<!-- ══════════ HOME ══════════ -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-logo">KEPT LUXE<sup>®</sup></div>
+      <div class="hero-rule"></div>
+      <div class="hero-slogan">Stay Kept.</div>
+      <div class="hero-cta"><button class="btn-outline" onclick="showPage('shop')">Shop the Collection</button></div>
+    </div>
+    <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
+  </section>
+
+  <div class="marquee-wrap">
+    <div class="marquee-track">
+      <span>Kept Luxe</span><span class="dot">·</span><span>Summer 2026</span><span class="dot">·</span><span>New Arrivals</span><span class="dot">·</span><span>Stay Kept</span><span class="dot">·</span><span>Accessories Edit</span><span class="dot">·</span><span>Clothing &amp; Accessories</span><span class="dot">·</span><span>Kept Luxe</span><span class="dot">·</span><span>Summer 2026</span><span class="dot">·</span><span>New Arrivals</span><span class="dot">·</span><span>Stay Kept</span><span class="dot">·</span><span>Accessories Edit</span><span class="dot">·</span><span>Clothing &amp; Accessories</span><span class="dot">·</span>
+    </div>
+  </div>
+
+  <div class="home-grid">
+    <div class="home-grid-item" onclick="showPage('shop')">
+      <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=900&q=80&fit=crop" alt="Summer Collection"/>
+      <div class="overlay"><div><p class="grid-eyebrow">Summer 2026</p><div class="grid-label">The Accessories<br>Edit</div></div></div>
+    </div>
+    <div class="home-grid-item" onclick="showPage('shop')">
+      <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=900&q=80&fit=crop" alt="Silk Scarves"/>
+      <div class="overlay"><div><p class="grid-eyebrow">New Arrival</p><div class="grid-label">Silk Scarves<br>&amp; Eyewear</div></div></div>
+    </div>
+  </div>
+
+  <div class="home-statement">
+    <p>"Luxury is not about price. It is a standard — the quiet refusal to settle for anything less than what you deserve."</p>
+    <span class="attr">— KEPT LUXE®</span>
+  </div>
+</div>
+
+<!-- ══════════ SHOP ══════════ -->
+<div id="page-shop" class="page">
+  <div class="shop-header">
+    <div class="collection-title-block">
+      <h1>Summer 2026</h1>
+      <p class="collection-subtitle">The Accessories Edit — Resort · Elevated · Effortless</p>
+    </div>
+    <span class="shop-meta">4 Pieces</span>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
+    <button class="filter-btn" onclick="filterProducts('scarves',this)">Scarves</button>
+    <button class="filter-btn" onclick="filterProducts('hats',this)">Hats</button>
+    <button class="filter-btn" onclick="filterProducts('bags',this)">Bags</button>
+    <button class="filter-btn" onclick="filterProducts('eyewear',this)">Eyewear</button>
+  </div>
+
+  <div class="product-grid" id="productGrid">
+    <div class="product-card" data-category="scarves" onclick="openListing('scarf')">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1601924638867-3a6de6b7a500?w=700&q=80&fit=crop" alt="Silk Scarf"/>
+        <span class="product-badge">New</span>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Scarves · Summer 2026</p>
+        <h3 class="product-name">The Riviera Silk Scarf</h3>
+        <p class="product-price">$110.00</p>
+        <button class="view-product-btn">View Product</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-category="hats" onclick="openListing('hat')">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1521369909029-2afed882baee?w=700&q=80&fit=crop" alt="Sun Hat"/>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Hats · Summer 2026</p>
+        <h3 class="product-name">The Soleil Wide-Brim</h3>
+        <p class="product-price">$95.00</p>
+        <button class="view-product-btn">View Product</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-category="bags" onclick="openListing('bag')">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=700&q=80&fit=crop" alt="Summer Bag"/>
+        <span class="product-badge">Bestseller</span>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Bags · Summer 2026</p>
+        <h3 class="product-name">The Côte d'Azur Tote</h3>
+        <p class="product-price">$145.00</p>
+        <button class="view-product-btn">View Product</button>
+      </div>
+    </div>
+
+    <div class="product-card" data-category="eyewear" onclick="openListing('eyewear')">
+      <div class="product-img">
+        <img src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=700&q=80&fit=crop" alt="Sunglasses"/>
+        <span class="product-badge">New</span>
+      </div>
+      <div class="product-info">
+        <p class="product-category">Eyewear · Summer 2026</p>
+        <h3 class="product-name">The Eclipse Sunglasses</h3>
+        <p class="product-price">$125.00</p>
+        <button class="view-product-btn">View Product</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="coming-soon-section">
+    <h2>Fall 2026 — Coming Soon</h2>
+    <p>The next chapter of KEPT LUXE® · Arriving this autumn</p>
+  </div>
+</div>
+
+<!-- ══════════ LISTING VIEWS ══════════ -->
+
+<!-- SCARF -->
+<div id="listing-scarf" class="listing-view">
+  <button class="listing-back" onclick="closeListing()">Back to Collection</button>
+  <div class="listing-body">
+    <div class="listing-images"><img class="listing-main-img" src="https://images.unsplash.com/photo-1601924638867-3a6de6b7a500?w=1000&q=80&fit=crop" alt="The Riviera Silk Scarf"/></div>
+    <div class="listing-details">
+      <p class="listing-season">Summer 2026 · Scarves</p>
+      <h1 class="listing-name">The Riviera<br>Silk Scarf</h1>
+      <p class="listing-price">$110.00</p>
+      <div class="listing-divider"></div>
+      <p class="listing-desc">Lightweight, luminous, and endlessly versatile. Worn as a headscarf, neck tie, bag accent, or wrap — the Riviera is the piece that makes every summer look feel intentional. Finished with hand-rolled edges and a subtle KEPT LUXE® woven label.</p>
+      <ul class="listing-details-list">
+        <li><span>Material</span><span>100% Silk Satin</span></li>
+        <li><span>Dimensions</span><span>35" × 35"</span></li>
+        <li><span>Fit</span><span>One Size</span></li>
+        <li><span>Season</span><span>Summer 2026</span></li>
+        <li><span>Ships</span><span>Within 2 business days</span></li>
+        <li><span>Returns</span><span>First return complimentary · See policy</span></li>
+      </ul>
+      <button class="listing-cart-btn" onclick="handleCart()">Add to Amazon Cart</button>
+      <div class="listing-care"><h4>Care Instructions</h4><p>Dry clean only. Store folded in dust bag. Avoid prolonged exposure to direct sunlight.</p></div>
+      <div class="repair-note">✦ KEPT LUXE® Repair Program — This piece is an investment. If your item ever needs attention, <a onclick="showInfoPage('repair')">learn about our repair service.</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- HAT -->
+<div id="listing-hat" class="listing-view">
+  <button class="listing-back" onclick="closeListing()">Back to Collection</button>
+  <div class="listing-body">
+    <div class="listing-images"><img class="listing-main-img" src="https://images.unsplash.com/photo-1521369909029-2afed882baee?w=1000&q=80&fit=crop" alt="The Soleil Wide-Brim"/></div>
+    <div class="listing-details">
+      <p class="listing-season">Summer 2026 · Hats</p>
+      <h1 class="listing-name">The Soleil<br>Wide-Brim</h1>
+      <p class="listing-price">$95.00</p>
+      <div class="listing-divider"></div>
+      <p class="listing-desc">The hat that turns a beach into a runway. A generously wide brim in natural straw construction with a grosgrain ribbon trim. Packable, purposeful, and made to be seen. Arrives in a KEPT LUXE® dust bag.</p>
+      <ul class="listing-details-list">
+        <li><span>Material</span><span>Natural Straw, Grosgrain Ribbon</span></li>
+        <li><span>Brim Width</span><span>4 inches</span></li>
+        <li><span>Fit</span><span>One Size — adjustable inner band</span></li>
+        <li><span>Season</span><span>Summer 2026</span></li>
+        <li><span>Ships</span><span>Within 2 business days</span></li>
+        <li><span>Returns</span><span>First return complimentary · See policy</span></li>
+      </ul>
+      <button class="listing-cart-btn" onclick="handleCart()">Add to Amazon Cart</button>
+      <div class="listing-care"><h4>Care Instructions</h4><p>Spot clean with a damp cloth. Do not submerge in water. Store on a flat surface or hat stand to preserve shape.</p></div>
+      <div class="repair-note">✦ KEPT LUXE® Repair Program — This piece is an investment. If your item ever needs attention, <a onclick="showInfoPage('repair')">learn about our repair service.</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- BAG -->
+<div id="listing-bag" class="listing-view">
+  <button class="listing-back" onclick="closeListing()">Back to Collection</button>
+  <div class="listing-body">
+    <div class="listing-images"><img class="listing-main-img" src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=1000&q=80&fit=crop" alt="The Côte d'Azur Tote"/></div>
+    <div class="listing-details">
+      <p class="listing-season">Summer 2026 · Bags</p>
+      <h1 class="listing-name">The Côte d'Azur<br>Tote</h1>
+      <p class="listing-price">$145.00</p>
+      <div class="listing-divider"></div>
+      <p class="listing-desc">Built for the woman who carries her entire world with quiet elegance. Structured enough for the office, open enough for the shore. Woven raffia with vegan leather handles and a magnetic closure. KEPT LUXE® branded interior lining.</p>
+      <ul class="listing-details-list">
+        <li><span>Material</span><span>Woven Raffia, Vegan Leather</span></li>
+        <li><span>Dimensions</span><span>14" W × 12" H × 5" D</span></li>
+        <li><span>Fit</span><span>One Size</span></li>
+        <li><span>Season</span><span>Summer 2026</span></li>
+        <li><span>Ships</span><span>Within 2 business days</span></li>
+        <li><span>Returns</span><span>First return complimentary · See policy</span></li>
+      </ul>
+      <button class="listing-cart-btn" onclick="handleCart()">Add to Amazon Cart</button>
+      <div class="listing-care"><h4>Care Instructions</h4><p>Wipe clean with a dry cloth. Avoid exposure to water and direct sunlight. Store stuffed with tissue paper to maintain shape.</p></div>
+      <div class="repair-note">✦ KEPT LUXE® Repair Program — This piece is an investment. If your item ever needs attention, <a onclick="showInfoPage('repair')">learn about our repair service.</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- EYEWEAR -->
+<div id="listing-eyewear" class="listing-view">
+  <button class="listing-back" onclick="closeListing()">Back to Collection</button>
+  <div class="listing-body">
+    <div class="listing-images"><img class="listing-main-img" src="https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=1000&q=80&fit=crop" alt="The Eclipse Sunglasses"/></div>
+    <div class="listing-details">
+      <p class="listing-season">Summer 2026 · Eyewear</p>
+      <h1 class="listing-name">The Eclipse<br>Sunglasses</h1>
+      <p class="listing-price">$125.00</p>
+      <div class="listing-divider"></div>
+      <p class="listing-desc">Oversized acetate frames with UV400 polarized lenses. The kind of sunglasses that make people look twice. Arrives in a rigid KEPT LUXE® case with microfiber cleaning cloth and branded lens pouch.</p>
+      <ul class="listing-details-list">
+        <li><span>Material</span><span>Acetate Frame, Polarized Lens</span></li>
+        <li><span>UV Protection</span><span>UV400</span></li>
+        <li><span>Fit</span><span>One Size — fits most</span></li>
+        <li><span>Season</span><span>Summer 2026</span></li>
+        <li><span>Ships</span><span>Within 2 business days</span></li>
+        <li><span>Returns</span><span>First return complimentary · See policy</span></li>
+      </ul>
+      <button class="listing-cart-btn" onclick="handleCart()">Add to Amazon Cart</button>
+      <div class="listing-care"><h4>Care Instructions</h4><p>Clean lenses with the included microfiber cloth only. Store in the provided case when not in use. Avoid leaving in extreme heat.</p></div>
+      <div class="repair-note">✦ KEPT LUXE® Repair Program — This piece is an investment. If your item ever needs attention, <a onclick="showInfoPage('repair')">learn about our repair service.</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ABOUT ══════════ -->
+<div id="page-about" class="page">
+  <div class="about-hero"><div class="about-hero-bg"></div><h1>Our Story</h1></div>
+  <div class="about-body">
+    <div class="about-section">
+      <p class="about-eyebrow">The Beginning</p>
+      <h2>Born from a belief that luxury belongs to everyone who demands it.</h2>
+      <p>KEPT LUXE® was built on one idea: that a woman who carries herself with power deserves pieces that reflect that energy. Not borrowed luxury. Not fast fashion with a price tag. Real quality, real intention, real you.</p>
+      <p>We began with accessories because detail is where identity lives. A silk scarf. A wide-brim hat. A summer tote. The pieces that complete a look — and tell the world exactly who you are before you say a word. Clothing follows — and when it arrives, it will be worthy of everything that came before it.</p>
+    </div>
+    <div class="about-divider"></div>
+    <div class="about-section">
+      <p class="about-eyebrow">The Name</p>
+      <h2>What does it mean to Stay Kept?</h2>
+      <p>To be kept is not to be contained. It means to be preserved. To be maintained at the highest standard. Every piece in the KEPT LUXE® collection is made to last, made to matter, and made to move with you.</p>
+      <p>Luxe is not a price point. It is a standard. The quiet refusal to settle — in what you wear, in what you carry, in how you show up. Stay Kept.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><div class="pillar-number">I</div><h3>Quality First</h3><p>Every piece is selected for material, finish, and longevity. No shortcuts. No compromises.</p></div>
+      <div class="pillar"><div class="pillar-number">II</div><h3>Intentional Design</h3><p>Clothing and accessories designed to work together. Cohesive collections built for real life.</p></div>
+      <div class="pillar"><div class="pillar-number">III</div><h3>Yours to Keep</h3><p>Built to last seasons, not trends. Investment pieces for a wardrobe that grows with you.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CONTACT ══════════ -->
+<div id="page-contact" class="page">
+  <div class="contact-wrap">
+    <div class="contact-left">
+      <h1>Get in<br><em style="font-family:'Cormorant Garamond',serif;font-style:italic;">Touch</em></h1>
+      <p>Whether you have a question about an order, a return, or simply want to connect — we would love to hear from you.</p>
+      <div class="contact-detail"><p class="label">Email</p><p class="value"><a href="mailto:customersupport@keptluxe.com">customersupport@keptluxe.com</a></p></div>
+      <div class="contact-detail"><p class="label">Response Time</p><p class="value">Within 24–48 hours</p></div>
+      <div class="contact-detail"><p class="label">Follow</p><p class="value">@keptluxe</p></div>
+    </div>
+    <div class="contact-right">
+      <p class="form-note">Your message arrives directly to <strong style="opacity:.7;">customersupport@keptluxe.com</strong>. We will be in touch within 24–48 hours.</p>
+      <form action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+        <div class="form-group"><label>Your Name</label><input type="text" name="name" placeholder="Full name" required/></div>
+        <div class="form-group"><label>Email Address</label><input type="email" name="email" placeholder="your@email.com" required/></div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select name="subject">
+            <option value="">Select a subject</option>
+            <option>Order Inquiry</option>
+            <option>Return or Exchange</option>
+            <option>Repair Request</option>
+            <option>Wholesale / Partnership</option>
+            <option>Press &amp; Media</option>
+            <option>General Question</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea name="message" placeholder="How can we help you?"></textarea></div>
+        <input type="hidden" name="_subject" value="New KEPT LUXE® Inquiry"/>
+        <button type="submit" class="btn-primary" style="width:100%;text-align:center;">Send Message</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ INFO PAGES ══════════ -->
+
+<!-- SHIPPING -->
+<div id="info-shipping" class="info-page">
+  <button class="info-back" onclick="closeInfoPage()">Back</button>
+  <div class="info-header"><h1>Shipping Information</h1></div>
+  <div class="info-body">
+    <div class="info-section">
+      <h2>How We Ship</h2>
+      <p>Every KEPT LUXE® order is carefully packed and shipped by us personally. Your pieces are wrapped in tissue, placed in a branded box, and sealed with care before they leave our hands. We ship via USPS and UPS.</p>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>Processing &amp; Delivery</h2>
+      <ul>
+        <li>Orders are processed within 1–2 business days of purchase.</li>
+        <li>Standard shipping: 3–5 business days after processing.</li>
+        <li>Expedited shipping: 2 business days after processing, where available.</li>
+        <li>Orders placed on weekends or holidays are processed the following business day.</li>
+      </ul>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>Tracking Your Order</h2>
+      <p>A tracking number will be sent to you as soon as your order ships. You can follow your package directly through Amazon or the carrier's website. If you have not received tracking information within 3 business days of placing your order, please reach out to us at <a href="mailto:customersupport@keptluxe.com" style="color:#fff;">customersupport@keptluxe.com</a> and we will look into it right away.</p>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>Packaging</h2>
+      <p>Every KEPT LUXE® order arrives in a matte black box with white tissue, a branded card, and a ribbon or wax seal. The unboxing is part of the experience — because you deserve that from the very first moment it arrives at your door.</p>
+      <div class="info-note">We take every precaution to ensure your order arrives in perfect condition. Should your package experience any damage in transit, we sincerely apologize in advance. Please photograph both the packaging and the item upon delivery and reach out to us at <a href="mailto:customersupport@keptluxe.com" style="color:#fff;">customersupport@keptluxe.com</a> — we will take care of you.</div>
+    </div>
+  </div>
+</div>
+
+<!-- RETURNS -->
+<div id="info-returns" class="info-page">
+  <button class="info-back" onclick="closeInfoPage()">Back</button>
+  <div class="info-header"><h1>Returns &amp; Exchanges</h1></div>
+  <div class="info-body">
+    <div class="info-section">
+      <h2>Our Return Policy</h2>
+      <p>We stand behind every piece in the KEPT LUXE® collection. If you are not completely satisfied with your purchase, we gladly accept returns within <strong style="color:#fff;">30 days of your delivery date.</strong></p>
+      <p>Your <strong style="color:#fff;">first return on any order is complimentary.</strong> Should you need to return an additional item from the same order, return shipping will be the responsibility of the customer.</p>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>Conditions for Return</h2>
+      <p>To be eligible for a return, your item must meet the following:</p>
+      <ul>
+        <li>Returned within 30 days of the delivery date.</li>
+        <li>Unworn, unused, and in its original condition with all packaging intact.</li>
+        <li>Free of any odors, perfumes, or scents of any kind.</li>
+        <li>Free of any signs of wear, use, or handling beyond initial inspection.</li>
+        <li>Free of any damage, stains, marks, or alterations.</li>
+        <li>Accompanied by proof of purchase — your Amazon order number.</li>
+      </ul>
+      <div class="info-note">Any garment or item that arrives showing signs of wear, fragrance, damage, or use will be unable to be accepted and will be returned to you. We appreciate your grace in understanding — our standards exist to protect the integrity of every piece that carries the KEPT LUXE® name.</div>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>How to Initiate a Return</h2>
+      <ul>
+        <li>Email <a href="mailto:customersupport@keptluxe.com" style="color:#fff;">customersupport@keptluxe.com</a> with your Amazon order number and reason for return.</li>
+        <li>We will review your request and respond within 2 business days.</li>
+        <li>If approved, you will receive return instructions. Your first return includes a complimentary prepaid label.</li>
+        <li>Once your return is received and inspected, your refund will be processed within 5–7 business days to your original payment method.</li>
+      </ul>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>Damaged or Incorrect Orders</h2>
+      <p>If your order arrives damaged or you received the wrong item, please photograph both the item and the packaging immediately upon delivery and contact us within 48 hours at <a href="mailto:customersupport@keptluxe.com" style="color:#fff;">customersupport@keptluxe.com</a>. We will make it right — that is our promise to you.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SIZE GUIDE -->
+<div id="info-sizing" class="info-page">
+  <button class="info-back" onclick="closeInfoPage()">Back</button>
+  <div class="info-header"><h1>Size Guide</h1></div>
+  <div class="info-body">
+    <div class="info-section">
+      <h2>One Size — Fits All</h2>
+      <p>The KEPT LUXE® Summer 2026 collection is comprised entirely of accessories, each thoughtfully designed with a one-size-fits-all approach so that every piece may be worn and enjoyed without hesitation.</p>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>Accessories Fit Guide</h2>
+      <ul>
+        <li><strong style="color:#fff;">The Riviera Silk Scarf</strong> — 35" × 35". Worn tied, draped, or wrapped — endlessly adaptable to any style or silhouette.</li>
+        <li><strong style="color:#fff;">The Soleil Wide-Brim</strong> — One size with an adjustable inner band. Fits head circumferences 21"–23".</li>
+        <li><strong style="color:#fff;">The Côte d'Azur Tote</strong> — One size. Generously proportioned for daily essentials with handles that rest comfortably over the shoulder.</li>
+        <li><strong style="color:#fff;">The Eclipse Sunglasses</strong> — One size. Oversized frame designed to complement most face shapes. Lens width 58mm.</li>
+      </ul>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>Apparel Sizing — Coming Soon</h2>
+      <p>KEPT LUXE® is a clothing and accessories brand. Our Fall 2026 collection will introduce ready-to-wear clothing — jackets, turtlenecks, and trousers. A full apparel size guide will be published ahead of that launch. Follow us at @keptluxe to be among the first to know.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div id="info-faq" class="info-page">
+  <button class="info-back" onclick="closeInfoPage()">Back</button>
+  <div class="info-header"><h1>Frequently Asked Questions</h1></div>
+  <div class="info-body">
+    <div class="info-section"><h2>Is KEPT LUXE® a clothing brand?</h2><p>Yes. KEPT LUXE® is a clothing and accessories brand. We launched with our Summer 2026 accessories collection, and our first ready-to-wear pieces arrive with Fall 2026. Follow us at @keptluxe to stay close.</p></div>
+    <div class="info-divider"></div>
+    <div class="info-section"><h2>Where are KEPT LUXE® products sold?</h2><p>All KEPT LUXE® products are currently available through our Amazon storefront. Simply click "Add to Amazon Cart" on any product page. Every order is packed and shipped by us personally.</p></div>
+    <div class="info-divider"></div>
+    <div class="info-section"><h2>How long does shipping take?</h2><p>Orders are processed within 1–2 business days. Standard delivery is 3–5 business days thereafter. Visit our <a onclick="showInfoPage('shipping');return false;" style="color:#fff;cursor:pointer;text-decoration:underline;">Shipping page</a> for full details.</p></div>
+    <div class="info-divider"></div>
+    <div class="info-section"><h2>What is your return policy?</h2><p>We accept returns within 30 days of delivery on unworn, unused items in their original condition. Your first return is always complimentary. Please visit our <a onclick="showInfoPage('returns');return false;" style="color:#fff;cursor:pointer;text-decoration:underline;">Returns &amp; Exchanges page</a> for complete details.</p></div>
+    <div class="info-divider"></div>
+    <div class="info-section"><h2>Do you offer repairs?</h2><p>Yes. Every KEPT LUXE® piece is an investment, and we are committed to its longevity. Visit our <a onclick="showInfoPage('repair');return false;" style="color:#fff;cursor:pointer;text-decoration:underline;">Repair Program page</a> to learn more or submit a request.</p></div>
+    <div class="info-divider"></div>
+    <div class="info-section"><h2>Do you offer preorders?</h2><p>Yes. As collections sell through, select styles may become available for preorder. Please email <a href="mailto:customersupport@keptluxe.com" style="color:#fff;">customersupport@keptluxe.com</a> to inquire or to be added to a waitlist.</p></div>
+    <div class="info-divider"></div>
+    <div class="info-section"><h2>When is Fall 2026 available?</h2><p>The KEPT LUXE® Fall 2026 collection is coming soon. Follow us at @keptluxe across Instagram, TikTok, YouTube, and Pinterest to be the first to know.</p></div>
+    <div class="info-divider"></div>
+    <div class="info-section"><h2>How do I get in touch?</h2><p>We would love to hear from you. Email us at <a href="mailto:customersupport@keptluxe.com" style="color:#fff;">customersupport@keptluxe.com</a> or visit our <a onclick="showPage('contact');return false;" style="color:#fff;cursor:pointer;text-decoration:underline;">Contact page</a>. We respond within 24–48 hours.</p></div>
+  </div>
+</div>
+
+<!-- REPAIR -->
+<div id="info-repair" class="info-page">
+  <button class="info-back" onclick="closeInfoPage()">Back</button>
+  <div class="info-header"><h1>Repair Program</h1></div>
+  <div class="info-body">
+    <div class="info-section">
+      <h2>Your piece is an investment.</h2>
+      <p>At KEPT LUXE®, we believe luxury should endure. Every piece we offer is chosen for quality and longevity — and we stand behind that. If your item ever needs attention, we want to help you restore it to its original standard.</p>
+      <p>Our repair program exists to extend the life of your KEPT LUXE® pieces — not replace them. Because something worth having is worth caring for.</p>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>What We Repair</h2>
+      <ul>
+        <li>Loose or broken stitching on scarves, bags, and garments</li>
+        <li>Damaged hardware on bags and accessories</li>
+        <li>Hat reshaping and brim restoration</li>
+        <li>Sunglass frame adjustments and screw replacement</li>
+        <li>General restoration and care guidance</li>
+      </ul>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>Pricing</h2>
+      <p>We are thoughtfully finalizing our repair pricing to ensure it remains as accessible as it is worthy of the work involved.</p>
+      <div class="repair-price-note">Minor repairs — An assessment is required. Please reach out for a personalized quote.<br><br>Major repairs or restoration — Reviewed individually. A quote is always shared before any work begins. You will never be charged without your approval.</div>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-section">
+      <h2>How to Submit a Repair Request</h2>
+      <ul>
+        <li>Email <a href="mailto:customersupport@keptluxe.com" style="color:#fff;">customersupport@keptluxe.com</a> with the subject line: <em>Repair Request — [Item Name]</em>.</li>
+        <li>Include your original order number and clear photographs of the item and the area needing care.</li>
+        <li>We will respond within 3–5 business days with a thoughtful assessment and next steps.</li>
+        <li>Once approved, we will provide a return address for your item.</li>
+        <li>After repair, your piece will be returned in KEPT LUXE® packaging — because the experience matters, even the second time around.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">KEPT LUXE<sup>®</sup></div>
+      <p>A luxury clothing and accessories brand for those who move through the world with intention. Stay Kept.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a onclick="showPage('shop')">Summer 2026</a></li>
+        <li><a onclick="showPage('shop')">Scarves</a></li>
+        <li><a onclick="showPage('shop')">Hats</a></li>
+        <li><a onclick="showPage('shop')">Bags</a></li>
+        <li><a onclick="showPage('shop')">Eyewear</a></li>
+        <li><a onclick="showPage('shop')">Fall 2026 — Coming Soon</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a onclick="showInfoPage('repair')">Repair Program</a></li>
+        <li><a onclick="showPage('contact')">Contact</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a onclick="showInfoPage('shipping')">Shipping Info</a></li>
+        <li><a onclick="showInfoPage('returns')">Returns &amp; Exchanges</a></li>
+        <li><a onclick="showInfoPage('sizing')">Size Guide</a></li>
+        <li><a onclick="showInfoPage('faq')">FAQ</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 KEPT LUXE®. All rights reserved. Registered Trademark.</p>
+    <div class="social-links">
+      <a href="https://www.instagram.com/keptluxe" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://www.tiktok.com/@keptluxe" target="_blank" rel="noopener">TikTok</a>
+      <a href="https://www.youtube.com/@keptlux" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://www.pinterest.com/KEPTLUXE/" target="_blank" rel="noopener">Pinterest</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const AMAZON_STORE_URL = 'https://www.amazon.com/s?me=YOUR_SELLER_ID';
+
+  function showPage(id) {
+    document.querySelectorAll('.page,.listing-view,.info-page').forEach(el => el.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function openListing(id) {
+    document.querySelectorAll('.page,.listing-view,.info-page').forEach(el => el.classList.remove('active'));
+    document.getElementById('listing-' + id).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function closeListing() {
+    document.querySelectorAll('.page,.listing-view,.info-page').forEach(el => el.classList.remove('active'));
+    document.getElementById('page-shop').classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function showInfoPage(id) {
+    document.querySelectorAll('.page,.listing-view,.info-page').forEach(el => el.classList.remove('active'));
+    document.getElementById('info-' + id).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function closeInfoPage() {
+    document.querySelectorAll('.page,.listing-view,.info-page').forEach(el => el.classList.remove('active'));
+    document.getElementById('page-home').classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+  function filterProducts(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
+    });
+  }
+  function handleCart() {
+    // window.open(AMAZON_STORE_URL, '_blank');
+    showToast('Shop launching soon — Stay Kept.');
+  }
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3200);
+  }
+</script>
+</body>
+</html>
